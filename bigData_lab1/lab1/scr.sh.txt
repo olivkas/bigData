@@ -1,0 +1,17 @@
+cd docker-hadoop-master
+docker-compose up -d
+id=&(docker ps | grep namenode | AWK '{printf $1}')
+docker cp ../lab1-1.0-SNAPSHOT-jar-with-dependencies.jar $id:lab1-1.0-SNAPSHOT-jar-with-dependencies.jar
+docker cp ../../input/000000 $id:000000
+docker cp ../hadoop.sh $id:hadoop.sh
+
+
+docker exec -it namenode bash
+hdfs dfs -rm output/*
+hdfs dfs -rmdir output
+hdfs dfs -rm input/*
+hdfs dfs -rmdir input
+hadoop fs -mkdir -p input
+hdfs dfs -put 000000 input
+hadoop jar lab1-1.0-SNAPSHOT-jar-with-dependencies.jar input output
+hdfs dfs -cat output/part-r-00000
